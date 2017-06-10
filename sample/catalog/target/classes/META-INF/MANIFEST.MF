@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1448541328773
+Build-Jdk: 1.8.0_11
+Built-By: 504360
+Bundle-ManifestVersion: 2
+Bundle-Name: Camel Blueprint Route
+Bundle-SymbolicName: bookCatalog
+Bundle-Version: 1.0.0.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Export-Package: com.deva.bookCatalog;version="1.0.0.SNAPSHOT"
+Import-Package: org.osgi.service.blueprint;version="[1.0.0,2.0.0)"
+Originally-Created-By: Apache Maven Bundle Plugin
+Tool: Bnd-1.50.0

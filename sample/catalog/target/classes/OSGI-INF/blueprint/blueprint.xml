@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+       http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+
+  
+
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+  <route group="Catalog" id="book">
+    <description>creating a catalog based on book genre</description>
+    <from uri="file:D:\504360\sourceFolder?exclude=.*.DETAIL" id="getfile">
+      <description>get the file from source folder</description>
+    </from>
+    <log message="File Name : ${in.header.camelfilename}">
+    </log>
+    <choice >
+      <when >
+        <simple>${file:ext} == 'xml'</simple>
+        <log message="This is an XML file ${in.header.breadcrumbid}"/>
+        <setHeader headerName="genre" id="getGenre">
+          <description>create a header with name genre and take the value from genre tag</description>
+          <xpath>/catalog/book/genre/text()</xpath>
+        </setHeader>
+        <to uri="file:D:\504360\out?fileName=\${in.header.genre}\${file:onlyname}" id="Destination Folder">
+          <description>put the files in different folder based on genre</description>
+        </to>
+        <setBody id="description">
+          <description>content of the description tag</description>
+          <xpath>/catalog/book/description/text()</xpath>
+        </setBody>
+        <to uri="file:D:\504360\out?autoCreate=false&amp;fileName=${file:onlyname.noext}.DETAIL" id="detail">
+          <description>create file with detail about the book</description>
+        </to>
+      </when>
+      <otherwise >
+        <log message="This is ${file:ext} file.Not a XML file" id="log others">    
+        </log>
+      </otherwise>
+    </choice>
+  </route>
+</camelContext>
+
+</blueprint>
