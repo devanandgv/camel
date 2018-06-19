@@ -1,6 +1,6 @@
-#Camel Web Application with Rest Web Service
+# Camel Web Application with Rest Web Service
 
-##Routes:
+## Routes:
 
     1. Rest API
 
@@ -12,7 +12,7 @@
 
     3. Servlet Route - /CamelWebAppWithRestService/camel/hello
 
-##Notes : 
+## Notes : 
 
     1. Add spring web context listener to start spring container
 
