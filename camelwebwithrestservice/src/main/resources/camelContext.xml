@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:camel="http://camel.apache.org/schema/spring"
+    xmlns:cxf="http://camel.apache.org/schema/cxf"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd     http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd ">
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+    <cxf:rsServer id="rsServer" serviceClass="com.test.camel.web.samplerest.CamelWebRestService" address="/sample"/>
+    <camelContext id="camelContext-WebApp-Rest-Service" trace="false" xmlns="http://camel.apache.org/schema/spring">
+        <camel:route id="restRoute" streamCache="true">
+            <camel:from id="_from1" uri="cxfrs:bean:rsServer?bindingStyle=SimpleConsumer"/>
+            <camel:log id="_log1" message="operationName : ${header.operationName} :: requestBody : ${body}" />
+            <camel:choice>
+                <camel:when>
+                    <camel:simple>${header.operationName} == 'getOrder'</camel:simple>
+                     <camel:setBody id="_setBody1">
+                        <camel:simple>For Order no :${header.orderNo} : order details - total price :Rs. ${header.orderNo} </camel:simple>
+                    </camel:setBody>
+                </camel:when>
+                <camel:when>
+                    <camel:simple>${header.operationName} == 'putOrder'</camel:simple>
+                    <camel:setBody>
+                        <camel:simple>Order :${body} successfully saved</camel:simple>
+                    </camel:setBody>
+                </camel:when>
+            </camel:choice>
+            <camel:log id="_log2" message="response body ${body}"/>
+        </camel:route>
+        
+        
+        <route id="servletRoute" streamCache="true">
+            <from id="_from2" uri="servlet:hello"/>
+            <camel:log message="servlet Route : requestBody : ${body}"/>
+            <camel:setBody>
+                <camel:simple>{"requestBody":"${body}"}</camel:simple>
+            </camel:setBody>
+        </route>
+        
+        <camel:route id="timerRoute">
+            <camel:from uri="timer:sampleTimer?period=10000"/>
+            <camel:log message="timer route triggered ${date:now:yyyy-MM-dd:HH:mm:ss:SSS-z}"/>
+        </camel:route>
+    </camelContext>
+</beans>
