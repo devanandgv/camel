@@ -1,18 +1,18 @@
-Camel Web Application with Rest Web Service
+#Camel Web Application with Rest Web Service
 
-Routes:
+##Routes:
 
     1. Rest API
 
         i.  GET - /CamelWebAppWithRestService/cxf/sample/rest/order/{orderNo}
-        
+
         ii. PUT - /CamelWebAppWithRestService/cxf/sample/rest/order
 
     2. Timer Route - A Timer is triggered for every 10 seconds
 
     3. Servlet Route - /CamelWebAppWithRestService/camel/hello
 
-Notes : 
+##Notes : 
 
     1. Add spring web context listener to start spring container
 
