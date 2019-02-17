@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+		<property name="brokerURL" value="tcp://somehost:61616" />
+	</bean>
+	<camelContext xmlns="http://camel.apache.org/schema/spring">
+		<restConfiguration component="netty4-http"
+			contextPath="/sample" host="localhost" port="9091" />
+		<rest path="/splitter">
+
+		</rest>
+		<rest path="/muticast">
+			<post>
+				<route streamCache="true">
+					<log message="multicast request : ${body}" />
+					<multicast>
+						<inOnly uri="activemq:queue:multicastQueue1" />
+						<inOnly uri="activemq:queue:multicastQueue2" />
+						<inOnly uri="activemq:queue:multicastQueue3" />
+					</multicast>
+				</route>
+			</post>
+		</rest>
+		<rest path="/recipientlist/queue1{queue1}/queue2/{queue2}">
+			<post>
+				<route streamCache="true">
+					<log
+						message="recipientlist request : ${body} : queue1 : ${header.queue1} :: queue2 : ${header.queue2}" />
+					<setHeader headerName="targetList">
+						<simple>activemq:queue:${header.queue1}?disableReplyTo=true,activemq:queue:${header.queue2}?disableReplyTo=true</simple>
+					</setHeader>
+					<recipientList>
+						<header>targetList</header>
+					</recipientList>
+				</route>
+			</post>
+		</rest>
+	</camelContext>
+
+</beans>
